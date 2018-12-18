@@ -18,7 +18,7 @@ In short: We use [black-box variational inference](https://arxiv.org/abs/1401.01
 to find an approximation to the posterior over all parameters using optimization.
 The spike and slab prior introduces continuous and discrete random variables.
 To sample from the approximate posterior, we use the
-[Gumbel-Max trick](https://arxiv.org/abs/1611.01144) for the discrete varibles
+[Gumbel-Max trick](https://arxiv.org/abs/1611.01144) for the discrete variables
 and the
 [reparameterization trick](https://arxiv.org/abs/1312.6114) for the continuous variables.
 
