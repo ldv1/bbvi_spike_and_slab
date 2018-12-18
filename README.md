@@ -12,7 +12,15 @@ I adapted his code to linear models with spike and slab prior.
 You will need python 3 with [autograd](https://github.com/HIPS/autograd) and [matplotlib](https://matplotlib.org/).
 
 ## Model
-A succinct description of the model can be found [here](https://github.com/ldv1/bbvi_spike_and_slab/blob/master/paper.pdf)
+A succinct description of the model can be found [here](https://github.com/ldv1/bbvi_spike_and_slab/blob/master/paper.pdf).
+
+In short: We use [black-box variational inference](https://arxiv.org/abs/1401.0118)
+to find an approximation to the posterior over all parameters using optimization.
+The slab and slab prior introduces continuous and discrete random variables.
+To sample from the posterior, we use the
+[Gumbel-Max trick](https://arxiv.org/abs/1611.01144) for the discrete varibles
+and
+[reparameterization trick](https://arxiv.org/abs/1312.6114) for the continuous variables.
 
 ## Results
 For the generation of the dataset, we follow Bettencourt
