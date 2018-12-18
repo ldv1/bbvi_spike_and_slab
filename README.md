@@ -28,10 +28,12 @@ in [Bayes Sparse Regression](https://betanalpha.github.io/assets/case_studies/ba
 The covariates are all independently distributed around zero with unit variance,
 and there is a population of both large, relevant slopes and small, irrelevant slopes.
 Moreover, the data are collinear, with more covariates than observations,
-which implies a non-identified likelihood.
+which implies a non-identified likelihood. In details:
+We have M=200 covariates and N=100 noisy observations (variance of Gaussian noise is 1.).
+The probability that a covariate is large is Bernoulli(0.05).
 
 Bettencourt showed that the Finnish horseshoe prior does a pretty good job.
-However, it demands a certain level of expertise.
+However, the model is involved and tuning parameters demands a certain level of expertise.
 
 The spike and slab prior finds relevant slopes and set irrelevant slopes to 0,
 as depicted on the following figure:
