@@ -25,7 +25,9 @@ which implies a non-identified likelihood.
 Bettencourt showed that the Finnish horseshoe prior does a pretty good job.
 However, it demands a certain level of expertise.
 
-The spike and slab prior finds relevant slopes and set irrelevant slopes to 0.  
+The spike and slab prior finds relevant slopes and set irrelevant slopes to 0,
+as depicted on the following figure:
+
 ![Demo in 2D](https://github.com/ldv1/bbvi_spike_and_slab/blob/master/demo.png)
 
 ## Authors
