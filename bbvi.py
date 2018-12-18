@@ -40,7 +40,8 @@ def black_box_variational_inference(logprob, X, y, num_samples, batch_size):
     def entropy(s_pi, w_log_s2, log_s2_w):
         return  np.sum( \
                        - (1-s_pi)*np.log(1-s_pi) - s_pi*np.log(s_pi) \
-                       + 0.5*(1-s_pi)*(log_s2_w + np.log(2*np.pi*np.e)) + 0.5*s_pi*(w_log_s2 + np.log(2*np.pi*np.e)) \
+                       + 0.5*(1-s_pi)*(log_s2_w + np.log(2*np.pi*np.e)) \
+                       + 0.5*s_pi*(w_log_s2 + np.log(2*np.pi*np.e)) \
                        )
     
     def variational_objective(params, t):
@@ -54,7 +55,8 @@ def black_box_variational_inference(logprob, X, y, num_samples, batch_size):
             mean = s*w_mu
             var = s*np.exp(w_log_s2) + (1-s)*np.exp(log_s2_w)
             w = mean + np.sqrt(var) * np.random.randn(M)
-            datafit = datafit + logprob(s, w, log_s2_w, pi_w, log_s2, X, y, batch_size, t)
+            datafit = datafit \
+                      + logprob(s, w, log_s2_w, pi_w, log_s2, X, y, batch_size, t)
         datafit = datafit / num_samples
         regularizer = entropy(s_pi, w_log_s2, log_s2_w)
         lower_bound = regularizer + datafit
@@ -90,8 +92,8 @@ if __name__ == '__main__':
         else:
             beta[m] = 0.25*np.random.randn()
     print("true weights: {}".format(beta))
-    # offset
-    alpha = 3
+    # offset (not accounted for at the moment)
+    alpha = 0
     # inputs
     Xtrain = np.random.randn(N,M)
     # outputs
@@ -109,12 +111,14 @@ if __name__ == '__main__':
         ybatch = y[indices]
         
         def logprior():
-           return -M/2.*( np.log(2*np.pi) + log_s2_w) - 1./(2.*np.exp(log_s2_w))*np.sum(np.square(w)) \
+           return -M/2.*( np.log(2*np.pi) + log_s2_w) \
+                  - 1./(2.*np.exp(log_s2_w))*np.sum(np.square(w)) \
                   + np.sum( s*np.log(pi_w) + (1-s)*np.log(1-pi_w) )
             
         def loglik():
             y_mean = np.dot(Xbatch,s*w)
-            return -b/2.*( np.log(2*np.pi)+log_s2 ) - 1./(2.*np.exp(log_s2))*np.sum( np.square(ybatch-y_mean) )
+            return -b/2.*( np.log(2*np.pi)+log_s2 ) \
+                   - 1./(2.*np.exp(log_s2))*np.sum( np.square(ybatch-y_mean) )
         
         return N/b*loglik() + logprior()
 
@@ -128,7 +132,6 @@ if __name__ == '__main__':
     def callback(params, t, g):
         lb = -objective(params, t)
         print("Iteration {:05d} lower bound {:.3e}".format(t, lb))
-        #print("Iteration {:05d} lower bound {:.3e}, parameters = {}".format(t, lb, params))
         #input("Press Enter to continue...")
 
     # optimization
