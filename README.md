@@ -40,6 +40,10 @@ as depicted on the following figure:
 
 ![Demo in 2D](https://github.com/ldv1/bbvi_spike_and_slab/blob/master/demo.png)
 
+In the large N regime (in the figure below N=4000), the fit is excellent:
+
+![Demo in 2D](https://github.com/ldv1/bbvi_spike_and_slab/blob/master/demo_large_N.png)
+
 ## Authors
 Laurent de Vito
 
