@@ -16,10 +16,10 @@ A succinct description of the model can be found [here](https://github.com/ldv1/
 
 In short: We use [black-box variational inference](https://arxiv.org/abs/1401.0118)
 to find an approximation to the posterior over all parameters using optimization.
-The slab and slab prior introduces continuous and discrete random variables.
-To sample from the posterior, we use the
+The spike and slab prior introduces continuous and discrete random variables.
+To sample from the approximate posterior, we use the
 [Gumbel-Max trick](https://arxiv.org/abs/1611.01144) for the discrete varibles
-and
+and the
 [reparameterization trick](https://arxiv.org/abs/1312.6114) for the continuous variables.
 
 ## Results
