@@ -14,6 +14,7 @@ def softmax(z):
     return sm
 
 def Bernoulli(pi, T):
+    """Bernoulli samples uing the Gumbel-Max trick."""
     assert( pi.shape[1] == 2 )
     N = pi.shape[0]
     z = -np.log(-np.log(np.random.rand(N,2))) + np.log(pi)
@@ -54,10 +55,8 @@ def black_box_variational_inference(logprob, X, y, num_samples, batch_size):
             var = s*np.exp(w_log_s2) + (1-s)*np.exp(log_s2_w)
             w = mean + np.sqrt(var) * np.random.randn(M)
             datafit = datafit + logprob(s, w, log_s2_w, pi_w, log_s2, X, y, batch_size, t)
-        #print("datafit = {}".format(datafit))
         datafit = datafit / num_samples
         regularizer = entropy(s_pi, w_log_s2, log_s2_w)
-        #print("regularizer = {}".format(regularizer))
         lower_bound = regularizer + datafit
         return -lower_bound
 
