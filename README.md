@@ -12,7 +12,7 @@ I adapted his code to linear models with spike and slab prior.
 You will need python 3 with [autograd](https://github.com/HIPS/autograd) and [matplotlib](https://matplotlib.org/).
 
 ## Model
-A succint description of the model can be found [here](https://github.com/ldv1/bbvi_spike_and_slab/blob/master/paper.pdf)
+A succinct description of the model can be found [here](https://github.com/ldv1/bbvi_spike_and_slab/blob/master/paper.pdf)
 
 ## Results
 For the generation of the dataset, we follow Bettencourt
