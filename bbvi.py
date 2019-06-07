@@ -4,6 +4,7 @@ import autograd.numpy as np
 import autograd.numpy.random as npr
 from autograd import grad
 from autograd.misc.optimizers import adam
+from autograd.core import getval
 
 def sigmoid(z):
     return 1. / ( 1 + np.exp(-z) )
@@ -44,37 +45,37 @@ def black_box_variational_inference(logprob, X, y, num_samples, batch_size):
         # noise variance
         log_s2 = params[3*M+2]
         return w_mu, w_log_s2, s_pi, log_s2_w, pi_w, log_s2
-
-    def entropy(s_pi, w_log_s2, log_s2_w):
-        # entropy of the approx. posterior
-        return  np.sum( \
-                       - (1-s_pi)*np.log(1-s_pi) - s_pi*np.log(s_pi) \
-                       + 0.5*(1-s_pi)*(log_s2_w + np.log(2*np.pi*np.e)) \
-                       + 0.5*s_pi*(w_log_s2 + np.log(2*np.pi*np.e)) \
-                       )
     
     def variational_objective(params, t):
         # stochastic estimate of the variational lower bound
         
         w_mu, w_log_s2, s_pi, log_s2_w, pi_w, log_s2 = unpack_params(params)
         
-        # compute the expectation (the "data fit" term) by Monte Carlo sampling
+        # compute the expectation of the "data fit" term and the entropy
+        # by Monte Carlo sampling
         datafit = 0.
+        entropy = 0.
         for _ in range(num_samples):
-            # acquire Bernoulli samples
+            # acquire M Bernoulli samples
             s = Bernoulli(pi = np.column_stack( [ 1-s_pi, s_pi ] ), T=0.5)[:,1]
-            # acquire Normal distributed samples
+            # acquire M Gaussian distributed samples
             mean = s*w_mu
-            var = s*np.exp(w_log_s2) + (1-s)*np.exp(log_s2_w)
+            var  = s*np.exp(w_log_s2) + (1-s)*np.exp(log_s2_w)
             w = mean + np.sqrt(var) * np.random.randn(M)
             # compute the log of the joint probability
             datafit = datafit \
                       + logprob(s, w, log_s2_w, pi_w, log_s2, X, y, batch_size, t)
+            # compute the entropy q(w,s)
+            mean = getval(mean)
+            var  = getval(var)
+            s_pi = getval(s_pi)
+            entropy = entropy \
+                      + np.sum( 0.5*np.log(2*np.pi*var) + 0.5/var*np.power(w-mean, 2) ) \
+                      - np.sum( s*np.log(s_pi) + (1-s)*np.log(1-s_pi) )
         datafit = datafit / num_samples
-        # compute entropy of the approx. posterior of the weights
-        regularizer = entropy(s_pi, w_log_s2, log_s2_w)
+        entropy = entropy / num_samples
         # the lower bound to maximize
-        lower_bound = regularizer + datafit
+        lower_bound = datafit + entropy
         return -lower_bound
 
     gradient = grad(variational_objective)
@@ -151,7 +152,7 @@ if __name__ == '__main__':
         if t % 1000 == 0:
             lb = -objective(params, t)
             w_mu, w_log_s2, s_pi, log_s2_w, pi_w, log_s2 = unpack_params(params)
-            print("Iteration {:05d} lower bound {:.3e}, noise std {:.3e}" \
+            print("Iteration {:05d} lower bound {:.3e} noise std {:.3e}" \
                   .format(t, lb, np.exp(0.5*log_s2)))
             #input("Press Enter to continue...")
 
